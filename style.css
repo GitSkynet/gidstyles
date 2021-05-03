@@ -4,7 +4,6 @@
     font-family: "gotham";
 };
 
-
 .navbar-expand-lg .navbar-collapse {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -12,7 +11,7 @@
     -ms-flex-preferred-size: auto;
     flex-basis: auto;
     justify-content: flex-end !important;
-    max-height: 80px !important;
+    max-height: 70px !important;
 }
 
 .navbar-expand-lg {
@@ -206,3 +205,27 @@ nav .img-fluid {
     color: white;
     text-decoration: underline;
 }
+
+
+/* DDBB Styles */
+
+
+.page-wrapper .presentacion{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+};
+
+.panel{
+    display: flex;
+    flex-direction: column;
+}
+
+.carrousel-div{
+    width: 500px;
+    height: 250px;
+}
+
+
+/* End DDBB Styles */
