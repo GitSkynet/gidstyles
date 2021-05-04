@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     font-family: "gotham";
+    box-sizing:border-box
 };
 
 .navbar-expand-lg .navbar-collapse {
@@ -157,7 +158,7 @@ nav .img-fluid {
 }
 
 .footer {
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
     height: 160px;
@@ -206,26 +207,168 @@ nav .img-fluid {
     text-decoration: underline;
 }
 
+/* Content Styles */
 
-/* DDBB Styles */
+.panel1{
+    width: 40%;
+    margin: 10px;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.panel{
+    width: 50%;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.presentacion{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1em 20em;
+};
 
 
-.page-wrapper .presentacion{
+.content-div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+};
+
+.target{
+    height: 250px;
+    width: 180px;
+}
+
+/* .page-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+} */
+
+
+/* 1rst Carosulel item */
+
+.item img{
+    width: 50px;
+}
+
+.prueba{
+    display: flex;
+    flex-direction: row;
+}
+
+.carousel-item{
+    position: relative;
+    float: left;
+    width: 100%;
+    margin-right: -100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition: transform .6s ease-in-out;
+}
+
+.item{
+    width: 50% !important;
+}
+
+.item-text{
+    width: 50% !important;
+    background-color: black;
+    color: white;
+    padding: .5em;
+    text-align: center;
+}
+
+.buttonitem{
+    background-color: white;
+    color: black;
+    border-radius: 12px;
+    border: 1px solid white;
+    margin-top: 15px;
+    font-size: 12px;
+    padding: 1px 2px;
+}
+
+.item-text-header{
+    display: flex;
+    flex-direction: row;
+}
+
+.header-item{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    justify-content: flex-start;
+    text-align: initial;
+}
+
+.header-button {
+    width: 60%;
+}
+
+.header-button button{
+    width: 100%;
+}
+
+/* Estilo Contenido body */
+
+.content-div{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-};
-
-.panel{
-    display: flex;
-    flex-direction: column;
-}
-
-.carrousel-div{
-    width: 500px;
-    height: 250px;
+    flex-wrap: wrap;
+    border: 1px solid blue;
+    height: 700px;
 }
 
 
-/* End DDBB Styles */
+
+
+/* RESPONSIVE STYLES */
+/* MOBILE RESPONSIVE STYLES */
+
+@media(max-width: 440px){
+    /* .page-wrapper{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    } */
+    .presentacion {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+        align-items: center;
+        margin: 5px;
+    }
+    .panel {
+        width: 100%;
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+    .w-100 {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    .panel1 {
+        width: 100%;
+        margin: 5px 0px;
+        padding: 2em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+}
