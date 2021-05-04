@@ -1,0 +1,297 @@
+<!--  -->
+
+<table class="taula_header">
+    <tr><td>Prova rebre valor del servidor: </td><td>${ hello_world }</td></tr>
+    <tr><td>Array activitats: </td><td>${ m_activities }</td></tr>
+</table>
+
+<!--  -->
+<xsql-script name="control-pressupostari-in">
+    <body>
+        <set name='idControl'><http.request.getParameter name='id' /></set>
+        
+        <!-- carreguem les dades de la capçalera -->
+        <select>
+            <columns>*</columns>
+            <from table='dir_inversio_h'/>
+            <where>estenv='EN' AND seqno=${idControl}</where>
+        </select>
+        <set name='header'>
+            <json.fromMap>
+                <map>
+                    <item><string>seqno</string><ifnull><seqno/><string></string></ifnull></item>
+                    <item><string>empname</string><ifnull><empname/><string></string></ifnull></item>
+                    <item><string>versio</string><ifnull><versio/><string></string></ifnull></item>
+                    <item><string>codinv</string><ifnull><codinv/><string></string></ifnull></item>
+                    <item><string>nominv</string><ifnull><nominv/><string></string></ifnull></item>
+                    <item><string>nomres</string><ifnull><nomres/><string></string></ifnull></item>
+                    <item><string>estado</string><ifnull><estado/><string></string></ifnull></item>
+                    <item><string>nomest</string><ifnull><nomest/><string></string></ifnull></item>
+                    <item><string>fecent</string><ifnull><fecent/><string></string></ifnull></item>
+                    <item><string>fecalt</string><ifnull><fecalt/><string></string></ifnull></item>
+                </map>
+            </json.fromMap>
+        </set>
+        
+        <!-- carreguem dades de la primera taula -->
+        <array name='linies'></array>
+        <foreach>
+            <nativesql> 
+                SELECT * 
+                FROM dir_inversio_l 
+                WHERE seqno_ref=${idControl} 
+                ORDER BY codinv ASC, codcap ASC, codapa ASC
+            </nativesql>
+            <do>
+                
+                <stringBuffer name='accions'><string>&lt;a href="javascript:void(0)" title="<ifnull><notes/><string></string></ifnull>" class="notes"&gt;&lt;img src="{RUTA}/notas.png" /&gt;&lt;/a&gt; </string></stringBuffer>
+                
+                <set name='pdf_url'>
+                    <webapp.getBlob
+                         tabname='dir_inversio_fac_doc'
+                         colname='file_data'
+                         qrycond="docser='${docser}'"
+                    />
+                </set>
+                        
+                <if>
+                    <expr><ne><pdf_url /><string>/blob/session/-1</string></ne></expr>
+                    <then>
+                        <stringBuffer.append name='accions'><string>&lt;a href="<pdf_url />" target="_blank" class="pdf"&gt;&lt;img src="{RUTA}/pdf.png" /&gt;&lt;/a&gt; </string></stringBuffer.append>
+                    </then>
+                    <else><stringBuffer.append name='accions'><string>&lt;span class="img"&gt; &lt;/span&gt; </string></stringBuffer.append></else>
+                </if>
+                <if>
+                    <expr><eq><estado /><string>DG</string></eq></expr>
+                    <then><stringBuffer.append name='accions'><string>&lt;input type="checkbox" class="firmar" value="0" name="lineaControl_<seqno />"/&gt;</string></stringBuffer.append></then>
+                    <else><stringBuffer.append name='accions'><string>&lt;span class="img"&gt; &lt;/span&gt; </string></stringBuffer.append></else>
+                </if>
+                
+                <array.add name='linies'>
+                    <json.fromMap>
+                        <map>
+                            <item><string>seqno</string><ifnull><seqno/><string></string></ifnull></item>
+                            <item><string>codinv</string><ifnull><codinv/><string></string></ifnull></item>
+                            <item><string>codcap</string><ifnull><codcap/><string></string></ifnull></item>
+                            <item><string>nomcap</string><ifnull><nomcap/><string></string></ifnull></item>
+                            <item><string>codapa</string><ifnull><codapa/><string></string></ifnull></item>
+                            <item><string>nomapa</string><ifnull><nomapa/><string></string></ifnull></item>
+                            <item><string>gimpre</string><ifnull><gimpre/><string></string></ifnull></item>
+                            <item><string>gasto</string><ifnull><gasto/><string></string></ifnull></item>
+                            <item><string>disponible</string><ifnull><disponible/><string></string></ifnull></item>
+                            <item><string>psup</string><ifnull><psup/><string></string></ifnull></item>
+                            <item><string>fecdoc</string><string><date format='dd-mm-yy'><ifnull><fecdoc/><string>01-01-2000</string></ifnull></date></string></item>
+                            <item><string>docser</string><ifnull><docser/><string></string></ifnull></item>
+                            <item><string>refter</string><ifnull><refter/><string></string></ifnull></item>
+                            <item><string>nombre</string><ifnull><nombre/><string></string></ifnull></item>
+                            <item><string>import</string><ifnull><import/><string></string></ifnull></item>
+                            <item><string>punteigdireccio</string><ifnull><punteigdireccio/><string></string></ifnull></item>
+                            <item><string>importdcm</string><ifnull><importdcm/><string></string></ifnull></item>
+                            <item><string>tipefe</string><ifnull><tipefe/><string></string></ifnull></item>
+                            <item><string>estado</string><ifnull><estado/><string></string></ifnull></item>
+                            <item><string>totales</string><ifnull><totales/><string></string></ifnull></item>
+                            <item><string>imptotales</string><ifnull><imptotales/><string></string></ifnull></item>
+                            <item><string>accions</string><accions /></item>
+                        </map>
+                    </json.fromMap>
+                </array.add>
+            </do>
+        </foreach>
+
+        <!-- carreguem dades de la segona taula -->
+        <array name='validacions'></array>
+
+
+
+        <select prefix='max_'>
+        	<columns>MAX(versio) versio</columns>
+        	<from table='dir_inversio_validacions' />
+        	<where>
+        		codinv = <invori />
+        	</where>
+        </select>
+
+         <foreach>
+            <select>
+                <columns>*</columns>
+                <from table='dir_inversio_validacions' />
+                <where>
+                    codinv = <invori />     AND
+                    versio &lt; <max_versio /> AND
+                    estado IN ('FI', 'AP')  AND
+                    essuma = 0
+                </where>
+                <order>
+                    versio
+                </order>
+            </select>
+            <do>
+                <stringBuffer name='accions'><string>&lt;a href="javascript:void(0)" title="<ifnull><notes/><string></string></ifnull>" class="notes2"&gt;&lt;img src="{RUTA}/notas.png" /&gt;&lt;/a&gt; </string></stringBuffer>
+                
+                <set name='pdf_url'>
+                    <webapp.getBlob
+                         tabname='dir_inversio_validacions'
+                         colname='file_data'
+                         qrycond="seqno='${seqno}'"
+                    />
+                </set>
+                
+                <if>
+                    <expr><ne><pdf_url /><string>/blob/session/-1</string></ne></expr>
+                    <then>
+                        <stringBuffer.append name='accions'><string>&lt;a href="<pdf_url />" target="_blank" class="pdf"&gt;&lt;img src="{RUTA}/pdf.png" /&gt;&lt;/a&gt; </string></stringBuffer.append>
+                    </then>
+                    <else><stringBuffer.append name='accions'><string>&lt;span class="img"&gt; &lt;/span&gt; </string></stringBuffer.append></else>
+                </if>
+
+                <stringBuffer.append name='accions'><string>&lt;img src="{RUTA}/icona_firmat.png" /&gt; </string></stringBuffer.append>
+
+                <array.add name='validacions'>
+                    <json.fromMap>
+                        <map>
+                            <item><string>seqno</string><ifnull><seqno/><string></string></ifnull></item>
+                            <item><string>concepte</string><ifnull><concepte/><string></string></ifnull></item>
+                            <item><string>import</string><ifnull><import/><string></string></ifnull></item>
+                            <item><string>ce</string><ifnull><ce/><string></string></ifnull></item>
+                            <item><string>essuma</string><ifnull><essuma/><string></string></ifnull></item>
+                            <item><string>estado</string><ifnull><estado/><string></string></ifnull></item>
+                            <item><string>accions</string><accions /></item>
+                        </map>
+                    </json.fromMap>
+                </array.add>
+            </do>
+        </foreach>
+
+        <select prefix='m_'>
+        	<columns><nvl>SUM(import),0</nvl> import</columns>
+        	<from table='dir_inversio_validacions' />
+        	<where>
+        		codinv = <invori />        AND
+        		versio &lt; <max_versio /> AND
+        		essuma = 0
+        	</where>
+        </select>
+
+        <if>
+        	<expr><gt><max_versio />1</gt></expr>
+        	<then>
+		        <array.add name='validacions'>
+		            <json.fromMap>
+		                <map>
+		                    <item><string>seqno</string><string /></item>
+		                    <item><string>concepte</string><string>TOTAL V. ANT.</string></item>
+		                    <item><string>import</string><ifnull><m_import /><string /></ifnull></item>
+		                    <item><string>ce</string><string /></item>
+		                    <item><string>essuma</string>1</item>
+		                    <item><string>estado</string><string /></item>
+		                    <item><string>accions</string><string /></item>
+		                </map>
+		            </json.fromMap>
+		        </array.add>
+        	</then>
+        </if>
+        
+        <foreach>
+        	<select>
+	        	<columns>*</columns>
+	        	<from table='dir_inversio_validacions' />
+	        	<where>
+	        		codinv = <invori />     AND
+	        		versio = <max_versio /> AND
+	        		estado IN ('EN', 'FI', 'AP')  AND
+	        		essuma = 0
+	        	</where>
+	        </select>
+            <do>
+                
+                <stringBuffer name='accions'><string>&lt;a href="javascript:void(0)" title="<ifnull><notes/><string></string></ifnull>" class="notes2"&gt;&lt;img src="{RUTA}/notas.png" /&gt;&lt;/a&gt; </string></stringBuffer>
+                
+                <set name='pdf_url'>
+                    <webapp.getBlob
+                         tabname='dir_inversio_validacions'
+                         colname='file_data'
+                         qrycond="seqno='${seqno}'"
+                    />
+                </set>
+                
+                <if>
+                    <expr><ne><pdf_url /><string>/blob/session/-1</string></ne></expr>
+                    <then>
+                        <stringBuffer.append name='accions'><string>&lt;a href="<pdf_url />" target="_blank" class="pdf"&gt;&lt;img src="{RUTA}/pdf.png" /&gt;&lt;/a&gt; </string></stringBuffer.append>
+                    </then>
+                    <else><stringBuffer.append name='accions'><string>&lt;span class="img"&gt; &lt;/span&gt; </string></stringBuffer.append></else>
+                </if>
+                
+                <switch name='estado'>
+                    <case value='EN'>
+                        <stringBuffer.append name='accions'><string></string></stringBuffer.append>
+                    </case>
+                    <default>
+                        <stringBuffer.append name='accions'><string>&lt;img src="{RUTA}/icona_firmat.png" /&gt; </string></stringBuffer.append>
+                    </default>
+                </switch>
+                        
+                
+                <array.add name='validacions'>
+                    <json.fromMap>
+                        <map>
+                            <item><string>seqno</string><ifnull><seqno/><string></string></ifnull></item>
+                            <item><string>concepte</string><ifnull><concepte/><string></string></ifnull></item>
+                            <item><string>import</string><ifnull><import/><string></string></ifnull></item>
+                            <item><string>ce</string><ifnull><ce/><string></string></ifnull></item>
+                            <item><string>essuma</string><ifnull><essuma/><string></string></ifnull></item>
+                            <item><string>estado</string><ifnull><estado/><string></string></ifnull></item>
+                            <item><string>accions</string><accions /></item>
+                        </map>
+                    </json.fromMap>
+                </array.add>
+
+                <set name='m_import'><add><m_import /><import /></add></set>
+            </do>
+        </foreach>
+
+        <array.add name='validacions'>
+            <json.fromMap>
+                <map>
+                    <item><string>seqno</string><string /></item>
+                    <item><string>concepte</string><string>TOTAL V. ACT.</string></item>
+                    <item><string>import</string><ifnull><m_import/><string /></ifnull></item>
+                    <item><string>ce</string><string /></item>
+                    <item><string>essuma</string>1</item>
+                    <item><string>estado</string><string /></item>
+                    <item><string>accions</string><string /></item>
+                </map>
+            </json.fromMap>
+        </array.add>
+        
+        
+        <array name='comentaris'></array>
+        <foreach>
+            <nativesql> 
+               SELECT notes, user_created, date_created FROM dir_inversio_notes WHERE codinv='${codinv}' ORDER BY date_created ASC
+            </nativesql>
+            <do>
+                <array.add name='comentaris'>
+                    <json.fromMap>
+                        <map>
+                            <item><string>notes</string><ifnull><notes/><string></string></ifnull></item>
+                            <item><string>user</string><ifnull><user_created/><string></string></ifnull></item>
+                            <item><string>date</string><string><date.format format='dd-MM-yyyy HH:mm'><ifnull><date_created/><string>01-01-2000</string></ifnull></date.format></string></item>
+                        </map>
+                    </json.fromMap>
+                </array.add>
+            </do>
+        </foreach>
+        
+        
+        
+        
+        <return>
+            <freemarker.template.process>
+                <freemarker.template.get name='control-pressupostari-in' />
+            </freemarker.template.process>
+        </return>
+        
+        
+    </body>
+</xsql-script>
