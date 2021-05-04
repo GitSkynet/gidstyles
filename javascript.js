@@ -376,11 +376,11 @@ var object = [
 ];
 
 var data =  object[0].Content;
-
 console.log("Data: ", data);
 
 function mostrarDatos(){
   var response = data.map(function(element) {
+    console.log(element)
     const option =  document.createElement('h2');
     option.value = element.ActivityCategory;
     option.innerText = element.ActivityCategory;
